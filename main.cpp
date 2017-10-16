@@ -8,6 +8,9 @@ private:
     vector<T> items;
 
 public:
+
+    Lista<T>();
+
     Lista<T>(int);
 
     ~Lista<T>();
@@ -24,7 +27,26 @@ public:
 
     int size();
 
+    void imprimir();
+
+
 };
+
+template<class T>
+Lista<T>::Lista() {
+
+}
+
+
+template<class T>
+void Lista<T>::imprimir() {
+    //Deve ser utilizado se a lista for de inteiras
+    for(int i = 0;i < items.size();i++) {
+        cout << items->at(i) << " " ;
+    }
+    cout << "\n";
+}
+
 
 template<class T>
 Lista<T>::Lista(int tamanho) {
@@ -62,35 +84,37 @@ int Lista<T>::size() {
 }
 
 
+//Implementaçao do Vertice
 
 template<class T>
 class Vertice {
 private:
-    Lista<T> *listadj;
-    Vertice *pred;
+    T item;
     string cor;
     int dist;
 public:
-    Vertice(int);
-    Vertice &getPred();
-    void setVertice(Vertice&);
+    Vertice(){};
+
+    T getItem();
+    void setItem(T);
+
     string getCor();
     void setCor(string);
-    void setPred(Vertice *pred);
+
     int getDist() const;
     void setDist(int dist);
 };
 
-
 template<class T>
-Vertice<T>::Vertice(int ordem) {
-    this->listaadj = new Lista<T>(ordem);
+T Vertice<T>::getItem() {
+    return this->item;
 }
 
 template<class T>
-void Vertice<T>::setPred(Vertice *pred) {
-    this->pred = pred;
+void Vertice<T>::setItem(T item) {
+    this->item = item;
 }
+
 
 template<class T>
 int Vertice<T>::getDist() const {
@@ -102,6 +126,9 @@ void Vertice<T>::setDist(int dist) {
     this->dist = dist;
 }
 
+
+
+
 template<class T>
 class Grafo {
 private:
@@ -109,9 +136,14 @@ private:
     int ordem;
     int tamanho;
 public:
+    Grafo(int);
+
     void inicialize(int);
+
     void insertEdge(Vertice<T>, Vertice<T>);
+
     void print();
+
     void bfs(Vertice<T>);
 
     Lista<T> &getListAdj();
@@ -125,7 +157,14 @@ public:
     int getTamanho();
 
     void setTamanho(int tamanho);
+
+    void imprimir();
 };
+
+template<class T>
+Grafo<T>::Grafo(int ordem) {
+    this->inicialize(ordem);
+}
 
 template <class T>
 Lista<T> &Grafo<T>::getListAdj() {
@@ -161,14 +200,23 @@ void Grafo<T>::setTamanho(int tamanho) {
 template<class T>
 void Grafo<T>::inicialize(int ordem) {
     this->ordem = ordem;
-    //listAdj =  new Lista<T>(ordem+1);
-
+    this->listAdj =  new Lista<T>[ordem+1];
 }
 
 template<class T>
 void Grafo<T>::insertEdge(Vertice<T> origem, Vertice<T> destino) {
-
+    listAdj[origem.getItem()].addToEnd(destino.getItem());
+    listAdj[destino.getItem()].addToEnd(origem.getItem());
+    tamanho++;
 }
+
+template<class T>
+void Grafo<T>::imprimir() {
+    for (int i=0;i<=this->ordem;i++) {
+        cout << "v[" << i << "] = ";
+    }
+}
+
 
 template <class T>
 void Grafo<T>::bfs(Vertice<T>) {
