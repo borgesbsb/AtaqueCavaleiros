@@ -40,9 +40,9 @@ Lista<T>::Lista() {
 
 template<class T>
 void Lista<T>::imprimir() {
-    //Deve ser utilizado se a lista for de inteiras
+
     for(int i = 0;i < items.size();i++) {
-        cout << items->at(i) << " " ;
+        cout << items.at(i) << " " ;
     }
     cout << "\n";
 }
@@ -125,9 +125,6 @@ template<class T>
 void Vertice<T>::setDist(int dist) {
     this->dist = dist;
 }
-
-
-
 
 template<class T>
 class Grafo {
@@ -214,6 +211,7 @@ template<class T>
 void Grafo<T>::imprimir() {
     for (int i=0;i<=this->ordem;i++) {
         cout << "v[" << i << "] = ";
+        listAdj[i].imprimir();
     }
 }
 
@@ -221,11 +219,36 @@ void Grafo<T>::imprimir() {
 template <class T>
 void Grafo<T>::bfs(Vertice<T>) {
 
+    for (int i=0;i<listAdj->size();i++) {
+
+    }
+
 }
 
 
-
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+
+    Grafo<int> grafo(4);
+
+    Vertice<int> vertice0;
+    Vertice<int> vertice1;
+    Vertice<int> vertice2;
+    Vertice<int> vertice3;
+
+    vertice0.setItem(0);
+    vertice1.setItem(1);
+    vertice2.setItem(2);
+    vertice3.setItem(3);
+
+
+    grafo.insertEdge(vertice0, vertice1);
+    grafo.insertEdge(vertice0, vertice3);
+    grafo.insertEdge(vertice1, vertice2);
+    grafo.insertEdge(vertice3, vertice2);
+    grafo.insertEdge(vertice3, vertice2);
+
+    grafo.imprimir();
+
+
     return 0;
 }
