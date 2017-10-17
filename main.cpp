@@ -21,6 +21,8 @@ public:
 
     void addToEnd(T&);
 
+    T pop();
+
     T itemAt(int);
 
     void remove(int);
@@ -36,6 +38,17 @@ template<class T>
 Lista<T>::Lista() {
 
 }
+
+template<class T>
+T Lista<T>::pop() {
+
+    T item;
+    item = this->items.at(0);
+    this->items.erase(this->items.begin());
+    return item;
+
+}
+
 
 
 template<class T>
@@ -92,6 +105,8 @@ private:
     T item;
     string cor;
     int dist;
+    Vertice<int>* pred;
+
 public:
     Vertice(){};
 
@@ -103,7 +118,22 @@ public:
 
     int getDist() const;
     void setDist(int dist);
+
+    void setPred(Vertice<int>*);
+    Vertice<T>* getPred();
+
 };
+
+template <class T>
+Vertice<T>* Vertice<T>::getPred() {
+    return this->pred;
+}
+
+
+template <class T>
+void Vertice<T>::setPred(Vertice<int>* pred) {
+    this->pred =  pred;
+}
 
 template<class T>
 void Vertice<T>::setCor(string cor ) {
@@ -142,6 +172,7 @@ private:
     Lista<Vertice<int>*> *listAdj;
     int ordem;
     int tamanho;
+    Vertice<int>* pred;
 public:
     Grafo<T>(int);
 
@@ -151,7 +182,7 @@ public:
 
     void print();
 
-    void bfs(Vertice<T>);
+    void bfs(Vertice<T>*);
 
     Lista<T> &getListAdj();
 
@@ -168,6 +199,7 @@ public:
     void imprimir();
 
 };
+
 
 template <class T>
 Grafo<T>::Grafo(int ordem) {
@@ -220,23 +252,49 @@ void Grafo<T>::insertEdge(Vertice<T>* origem, Vertice<T>* destino) {
 
 template<class T>
 void Grafo<T>::imprimir() {
-
        for (int i = 0;i<ordem;i++ ) {
            cout << "No: " << i << "\n";
            for (int j=0;j<listAdj[i].size();j++) {
 
                cout << listAdj[i].itemAt(j)->getItem() << "-" << listAdj[i].itemAt(j)->getCor() << " ";
-
            }
            cout << "\n\n";
        }
-
-
 }
 
 
 template <class T>
-void Grafo<T>::bfs(Vertice<T>) {
+void Grafo<T>::bfs(Vertice<T>* origem) {
+        //Colocando os vertices para branco
+        for (int i=0;i<ordem;i++){
+            for (int j=0;j<listAdj[i].size();j++){
+                listAdj[i].itemAt(j)->setCor("branco");
+                listAdj[i].itemAt(j)->setDist(9999);
+                listAdj[i].itemAt(j)->setPred(nullptr);
+            }
+        }
+        origem->setCor("cinza");
+        origem->setDist(0);
+        origem->setPred(nullptr);
+
+        Lista<Vertice<T>*> fPrioridades;
+        fPrioridades.addToEnd(origem);
+
+        while (fPrioridades.size() > 0) {
+            Vertice<T>* origem = fPrioridades.pop();
+
+            for (int i =0;i<listAdj[origem ->getItem()].size();i++){
+                if ( listAdj[origem->getItem()].itemAt(i)->getCor() == "branco" ){
+                    Vertice<T>* destino = listAdj[origem->getItem()].itemAt(i);
+                    destino->getCor("cinza");
+                    destino->setDist(origem->getDist()+1);
+
+                }
+            }
+
+
+
+        }
 
 
 }
@@ -245,6 +303,33 @@ void Grafo<T>::bfs(Vertice<T>) {
 int main() {
 
     Grafo<int> grafo(4);
+
+
+
+
+
+    /*
+
+    Lista<int> fila;
+
+    int *ponteiro  = new int() ;
+    int *ponteiro2 = new int() ;
+    int *ponteiro3 = new int() ;
+    *ponteiro = 1;
+    *ponteiro2 = 2;
+    *ponteiro3 = 3;
+
+
+    fila.addToEnd(*ponteiro);
+    fila.addToEnd(*ponteiro2);
+    fila.addToEnd(*ponteiro3);
+    fila.imprimir();
+    cout<<fila.size();
+    fila.pop();
+    cout << endl;
+    fila.imprimir();
+    cout<<fila.size();
+
 /* Ekementos de Teste
     Vertice<int> *vertice0 = new Vertice<int>();
     Vertice<int> *vertice1 = new Vertice<int>();
