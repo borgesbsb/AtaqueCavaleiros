@@ -19,7 +19,7 @@ public:
 
     void setItems(vector<T> items);
 
-    void addToEnd(T);
+    void addToEnd(T&);
 
     T itemAt(int);
 
@@ -69,7 +69,7 @@ void Lista<T>::setItems(vector<T> items) {
 }
 
 template <class T>
-void Lista<T>::addToEnd(T item ) {
+void Lista<T>::addToEnd(T &item ) {
     items.push_back(item);
 }
 
@@ -106,6 +106,11 @@ public:
 };
 
 template<class T>
+void Vertice<T>::setCor(string cor ) {
+    this->cor = cor;
+}
+
+template<class T>
 string Vertice<T>::getCor(){
     return this->cor;
 }
@@ -134,7 +139,7 @@ void Vertice<T>::setDist(int dist) {
 template<class T>
 class Grafo {
 private:
-    Lista<Vertice<int>> *listAdj;
+    Lista<Vertice<int>*> *listAdj;
     int ordem;
     int tamanho;
 public:
@@ -142,7 +147,7 @@ public:
 
     void inicialize(int);
 
-    void insertEdge( Vertice<T> &x,  Vertice<T> &y);
+    void insertEdge( Vertice<T>*,  Vertice<T>*);
 
     void print();
 
@@ -180,7 +185,6 @@ void Grafo<T>::setListAdj(Lista<T> &listAdj) {
     this->listAdj = listAdj;
 }
 
-
 template <class T>
 int Grafo<T>::getOrdem() {
     return ordem;
@@ -204,35 +208,36 @@ void Grafo<T>::setTamanho(int tamanho) {
 template<class T>
 void Grafo<T>::inicialize(int ordem) {
     this->ordem = ordem;
-    this->listAdj =  new Lista<Vertice<T>>[ordem+1];
+    this->listAdj =  new Lista<Vertice<T>*>[ordem+1];
 }
 
 template<class T>
-void Grafo<T>::insertEdge(Vertice<T> &origem, Vertice<T> &destino) {
-    //listAdj[0].addToEnd(1);
-
-
-
-    //listAdj[destino.getItem()].addToEnd(origem.getItem());
+void Grafo<T>::insertEdge(Vertice<T>* origem, Vertice<T>* destino) {
+    listAdj[origem->getItem()].addToEnd(destino);
+    listAdj[destino->getItem()].addToEnd(origem);
     tamanho++;
 }
 
 template<class T>
 void Grafo<T>::imprimir() {
-    for (int i=0;i<=this->ordem;i++) {
-        cout << "v[" << i << "] = ";
-        listAdj[i].imprimir();
-       // cout << listAdj->itemAt(i).setCor("Branco");
-    }
+
+       for (int i = 0;i<ordem;i++ ) {
+           cout << "No: " << i << "\n";
+           for (int j=0;j<listAdj[i].size();j++) {
+
+               cout << listAdj[i].itemAt(j)->getItem() << "-" << listAdj[i].itemAt(j)->getCor() << " ";
+
+           }
+           cout << "\n\n";
+       }
+
+
 }
 
 
 template <class T>
 void Grafo<T>::bfs(Vertice<T>) {
 
-    for (int i=0;i<listAdj->size();i++) {
-        listAdj->itemAt(i).setCor("branco");
-    }
 
 }
 
@@ -240,30 +245,32 @@ void Grafo<T>::bfs(Vertice<T>) {
 int main() {
 
     Grafo<int> grafo(4);
+/* Ekementos de Teste
+    Vertice<int> *vertice0 = new Vertice<int>();
+    Vertice<int> *vertice1 = new Vertice<int>();
+    Vertice<int> *vertice2 = new Vertice<int>();
+    Vertice<int> *vertice3 = new Vertice<int>();
 
-    Vertice<int> vertice0;
-    Vertice<int> vertice1;
-    Vertice<int> vertice2;
-    Vertice<int> vertice3;
+    vertice0->setItem(0);
+    vertice0->setCor("branco");
 
-    Lista<Vertice<int>> *listaNormal = new Lista<Vertice<int>>[2];
+    vertice1->setItem(1);
+    vertice1->setCor("azul");
 
-    listaNormal[0].addToEnd(vertice0);
+    vertice2->setItem(2);
+    vertice2->setCor("amarelo");
 
+    vertice3->setItem(3);
+    vertice3->setCor("roxo");
 
-
-    //vertice0.setItem(0);
-    //vertice1.setItem(1);
-    //vertice2.setItem(2);
-    //vertice3.setItem(3);
-
-    //grafo.insertEdge(vertice0, vertice1);
-   // grafo.insertEdge(vertice0, vertice3);
-   // grafo.insertEdge(vertice1, vertice2);
-   // grafo.insertEdge(vertice3, vertice2);
-   // grafo.insertEdge(vertice3, vertice2);
-
-   // grafo.imprimir();
-
+    grafo.insertEdge(vertice0, vertice1);
+    grafo.insertEdge(vertice0, vertice3);
+    grafo.insertEdge(vertice1, vertice2);
+    grafo.insertEdge(vertice3, vertice2);
+    grafo.imprimir();
+    cout << "teste cor============================================="<<"\n";
+    vertice1->setCor("Verde");
+    grafo.imprimir();
+*/
     return 0;
 }
