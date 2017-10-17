@@ -106,6 +106,11 @@ public:
 };
 
 template<class T>
+string Vertice<T>::getCor(){
+    return this->cor;
+}
+
+template<class T>
 T Vertice<T>::getItem() {
     return this->item;
 }
@@ -129,15 +134,15 @@ void Vertice<T>::setDist(int dist) {
 template<class T>
 class Grafo {
 private:
-    Lista<T> *listAdj;
+    Lista<Vertice<int>> *listAdj;
     int ordem;
     int tamanho;
 public:
-    Grafo(int);
+    Grafo<T>(int);
 
     void inicialize(int);
 
-    void insertEdge(Vertice<T>, Vertice<T>);
+    void insertEdge( Vertice<T> &x,  Vertice<T> &y);
 
     void print();
 
@@ -156,17 +161,19 @@ public:
     void setTamanho(int tamanho);
 
     void imprimir();
+
 };
 
-template<class T>
+template <class T>
 Grafo<T>::Grafo(int ordem) {
-    this->inicialize(ordem);
+    inicialize(ordem);
 }
 
 template <class T>
 Lista<T> &Grafo<T>::getListAdj() {
-    return listAdj;
+    return &listAdj;
 }
+
 
 template <class T>
 void Grafo<T>::setListAdj(Lista<T> &listAdj) {
@@ -197,13 +204,16 @@ void Grafo<T>::setTamanho(int tamanho) {
 template<class T>
 void Grafo<T>::inicialize(int ordem) {
     this->ordem = ordem;
-    this->listAdj =  new Lista<T>[ordem+1];
+    this->listAdj =  new Lista<Vertice<T>>[ordem+1];
 }
 
 template<class T>
-void Grafo<T>::insertEdge(Vertice<T> origem, Vertice<T> destino) {
-    listAdj[origem.getItem()].addToEnd(destino.getItem());
-    listAdj[destino.getItem()].addToEnd(origem.getItem());
+void Grafo<T>::insertEdge(Vertice<T> &origem, Vertice<T> &destino) {
+    //listAdj[0].addToEnd(1);
+
+
+
+    //listAdj[destino.getItem()].addToEnd(origem.getItem());
     tamanho++;
 }
 
@@ -212,6 +222,7 @@ void Grafo<T>::imprimir() {
     for (int i=0;i<=this->ordem;i++) {
         cout << "v[" << i << "] = ";
         listAdj[i].imprimir();
+       // cout << listAdj->itemAt(i).setCor("Branco");
     }
 }
 
@@ -220,7 +231,7 @@ template <class T>
 void Grafo<T>::bfs(Vertice<T>) {
 
     for (int i=0;i<listAdj->size();i++) {
-
+        listAdj->itemAt(i).setCor("branco");
     }
 
 }
@@ -235,20 +246,24 @@ int main() {
     Vertice<int> vertice2;
     Vertice<int> vertice3;
 
-    vertice0.setItem(0);
-    vertice1.setItem(1);
-    vertice2.setItem(2);
-    vertice3.setItem(3);
+    Lista<Vertice<int>> *listaNormal = new Lista<Vertice<int>>[2];
+
+    listaNormal[0].addToEnd(vertice0);
 
 
-    grafo.insertEdge(vertice0, vertice1);
-    grafo.insertEdge(vertice0, vertice3);
-    grafo.insertEdge(vertice1, vertice2);
-    grafo.insertEdge(vertice3, vertice2);
-    grafo.insertEdge(vertice3, vertice2);
 
-    grafo.imprimir();
+    //vertice0.setItem(0);
+    //vertice1.setItem(1);
+    //vertice2.setItem(2);
+    //vertice3.setItem(3);
 
+    //grafo.insertEdge(vertice0, vertice1);
+   // grafo.insertEdge(vertice0, vertice3);
+   // grafo.insertEdge(vertice1, vertice2);
+   // grafo.insertEdge(vertice3, vertice2);
+   // grafo.insertEdge(vertice3, vertice2);
+
+   // grafo.imprimir();
 
     return 0;
 }
