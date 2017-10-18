@@ -246,7 +246,7 @@ void Grafo<T>::inicialize(int ordem) {
 template<class T>
 void Grafo<T>::insertEdge(Vertice<T>* origem, Vertice<T>* destino) {
     listAdj[origem->getItem()].addToEnd(destino);
-    listAdj[destino->getItem()].addToEnd(origem);
+    //  listAdj[destino->getItem()].addToEnd(origem);
     tamanho++;
 }
 
@@ -288,21 +288,102 @@ void Grafo<T>::bfs(Vertice<T>* origem) {
                     Vertice<T>* destino = listAdj[origem->getItem()].itemAt(i);
                     destino->getCor("cinza");
                     destino->setDist(origem->getDist()+1);
-
+                    destino->setPred(origem);
+                    fPrioridades.addToEnd(destino);
                 }
+            origem->setCor("preto");
             }
-
-
-
         }
-
-
 }
 
 
 int main() {
 
-    Grafo<int> grafo(4);
+    Grafo<int> grafo(11);
+
+    Vertice<int> *vertice1 = new Vertice<int>();
+    vertice1->setItem(1);
+
+    Vertice<int> *vertice2 = new Vertice<int>();
+    vertice2->setItem(2);
+
+    Vertice<int> *vertice3 = new Vertice<int>();
+    vertice3->setItem(3);
+
+    Vertice<int> *vertice4 = new Vertice<int>();
+    vertice4->setItem(4);
+
+    Vertice<int> *vertice5 = new Vertice<int>();
+    vertice5->setItem(5);
+
+    Vertice<int> *vertice6 = new Vertice<int>();
+    vertice6->setItem(6);
+
+    Vertice<int> *vertice7 = new Vertice<int>();
+    vertice7->setItem(7);
+
+    Vertice<int> *vertice8 = new Vertice<int>();
+    vertice8->setItem(8);
+
+    Vertice<int> *vertice9 = new Vertice<int>();
+    vertice9->setItem(9);
+
+    Vertice<int> *vertice10 = new Vertice<int>();
+    vertice10->setItem(10);
+
+    Vertice<int> *vertice11 = new Vertice<int>();
+    vertice11->setItem(11);
+
+    grafo.insertEdge(vertice1, vertice9);
+    grafo.insertEdge(vertice1, vertice10);
+    grafo.insertEdge(vertice1, vertice11);
+    grafo.insertEdge(vertice1, vertice2);
+    grafo.insertEdge(vertice2, vertice1);
+    grafo.insertEdge(vertice2, vertice10);
+    grafo.insertEdge(vertice2, vertice11);
+    grafo.insertEdge(vertice2, vertice6);
+    grafo.insertEdge(vertice2, vertice5);
+    grafo.insertEdge(vertice2, vertice4);
+    grafo.insertEdge(vertice2, vertice3);
+    grafo.insertEdge(vertice3, vertice2);
+    grafo.insertEdge(vertice3, vertice4);
+    grafo.insertEdge(vertice4, vertice3);
+    grafo.insertEdge(vertice4, vertice2);
+    grafo.insertEdge(vertice4, vertice11);
+    grafo.insertEdge(vertice4, vertice5);
+    grafo.insertEdge(vertice5, vertice4);
+    grafo.insertEdge(vertice5, vertice2);
+    grafo.insertEdge(vertice5, vertice11);
+    grafo.insertEdge(vertice5, vertice6);
+    grafo.insertEdge(vertice6, vertice5);
+    grafo.insertEdge(vertice6, vertice2);
+    grafo.insertEdge(vertice6, vertice11);
+    grafo.insertEdge(vertice6, vertice7);
+    grafo.insertEdge(vertice7, vertice6);
+    grafo.insertEdge(vertice7, vertice11);
+    grafo.insertEdge(vertice7, vertice10);
+    grafo.insertEdge(vertice7, vertice9);
+    grafo.insertEdge(vertice7, vertice8);
+    grafo.insertEdge(vertice8, vertice7);
+    grafo.insertEdge(vertice8, vertice9);
+    grafo.insertEdge(vertice9, vertice8);
+    grafo.insertEdge(vertice9, vertice7);
+    grafo.insertEdge(vertice9, vertice10);
+    grafo.insertEdge(vertice9, vertice1);
+    grafo.insertEdge(vertice10, vertice7);
+    grafo.insertEdge(vertice10, vertice11);
+    grafo.insertEdge(vertice10, vertice2);
+    grafo.insertEdge(vertice10, vertice1);
+    grafo.insertEdge(vertice10, vertice9);
+    grafo.insertEdge(vertice11, vertice6);
+    grafo.insertEdge(vertice11, vertice5);
+    grafo.insertEdge(vertice11, vertice4);
+    grafo.insertEdge(vertice11, vertice2);
+    grafo.insertEdge(vertice11, vertice1);
+    grafo.insertEdge(vertice11, vertice10);
+    grafo.insertEdge(vertice11, vertice7);
+
+    grafo.imprimir();
 
 
 
