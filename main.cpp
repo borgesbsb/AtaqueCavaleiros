@@ -198,6 +198,8 @@ public:
 
     void imprimir();
 
+    Lista<Vertice<T>*> *getCaminho(Vertice<T>*);
+
 };
 
 
@@ -262,6 +264,25 @@ void Grafo<T>::imprimir() {
        }
 }
 
+template<class T>
+Lista<Vertice<T>*>  *Grafo<T>::getCaminho(Vertice<T> *alvo){
+    Lista<Vertice<T>*>* caminho = new Lista<Vertice<T>*>();
+    Vertice<T> *caminhante = new Vertice<T>();
+    *caminhante = *alvo;
+
+    while (caminhante->getPred() != nullptr) {
+            Vertice<T> *jogada = new Vertice<T>();
+            *jogada = *caminhante;
+
+            caminho->addToEnd(jogada);
+
+            caminhante = caminhante->getPred();
+    }
+            caminho->addToEnd(caminhante);
+
+    return caminho;
+}
+
 
 template <class T>
 void Grafo<T>::bfs(Vertice<T>* origem) {
@@ -286,7 +307,7 @@ void Grafo<T>::bfs(Vertice<T>* origem) {
             for (int i =0;i<listAdj[origem ->getItem()].size();i++){
                 if ( listAdj[origem->getItem()].itemAt(i)->getCor() == "branco" ){
                     Vertice<T>* destino = listAdj[origem->getItem()].itemAt(i);
-                    destino->getCor("cinza");
+                    destino->setCor("cinza");
                     destino->setDist(origem->getDist()+1);
                     destino->setPred(origem);
                     fPrioridades.addToEnd(destino);
@@ -383,7 +404,17 @@ int main() {
     grafo.insertEdge(vertice11, vertice10);
     grafo.insertEdge(vertice11, vertice7);
 
-    grafo.imprimir();
+    grafo.bfs(vertice8);
+
+    Lista<Vertice<int>*> *jogadas = grafo.getCaminho(vertice3);
+
+    for (int i = 0; i< jogadas->size();i++) {
+        cout << jogadas->itemAt(i)->getItem() << " ";
+
+    }
+
+
+    //grafo.imprimir();
 
 
 
