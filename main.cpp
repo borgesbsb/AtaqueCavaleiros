@@ -329,10 +329,10 @@ void Grafo<T>::bfs(Vertice<T>* origem) {
 
 class Tabuleiro {
 private:
-    Grafo<string> *grafo;
+    Grafo<int> *grafo;
     Lista<string> *posCavalos;
     int rei;
-    Vertice<string> *matriz[8][8];
+    Vertice<int> *matriz[8][8];
 
 
 public:
@@ -346,7 +346,20 @@ public:
 
     char numberToNumber(int);
 
+    Grafo<int> *getGrafo();
+
+    void inserirCavalo(Vertice<int>*);
+
 };
+
+Grafo<int> *Tabuleiro::getGrafo() {
+    return this->grafo;
+}
+
+void Tabuleiro::inserirCavalo(Vertice<int> *vertice) {
+    this->grafo->bfs(vertice);
+}
+
 
 char Tabuleiro::stringToNumber(char letra) {
     switch (letra) {
@@ -424,8 +437,6 @@ void Tabuleiro::setPosCavalos(Lista<string> *posCavalos) {
     this->posCavalos = posCavalos;
 
 
-
-
 }
 
 
@@ -433,22 +444,47 @@ void Tabuleiro::setPosCavalos(Lista<string> *posCavalos) {
 
 Tabuleiro::Tabuleiro() {
 
-    grafo = new  Grafo<string>(64);
+    grafo = new  Grafo<int>(64);
+    int numeroCasa = 0;
 
     for (int i = 0;i<8;i++) {
         for (int j=0; j<8;j++) {
-            string casa;
-            casa.push_back(numberToString(j));
-            casa.push_back(numberToNumber(i));
-            matriz[i][j] = new Vertice<string>(casa);
+             matriz[i][j] = new Vertice<int>(numeroCasa);
+            numeroCasa++;
         }
     }
 
     for (int i=0;i<8;i++) {
         for ( int j=0;j<8;j++) {
 
-            grafo->insertEdge(matriz[i][j],matriz[i+1][j+2]);
-
+            //direita
+            if ((i+1 < 8) &&  (j+2 < 8)) {
+                grafo->insertEdge(matriz[i][j], matriz[i + 1][j + 2]);
+            }
+            if ( (i-1 >=0 ) && (j+2 < 8) ) {
+                grafo->insertEdge(matriz[i][j], matriz[i - 1][j+2]);
+            }
+            //baixo
+            if ( (i+2 < 8) && ( j+1 < 8  )   ) {
+                grafo->insertEdge(matriz[i][j], matriz[i + 2][j + 1]);
+            }
+            if ( (i+2 < 8) && ( j-1 >= 0  ) ) {
+                grafo->insertEdge(matriz[i][j], matriz[i + 2][j - 1]);
+            }
+            //esquerda
+            if (( i+1 < 8 ) && (j - 2 >= 0 ) ){
+                grafo->insertEdge(matriz[i][j], matriz[i + 1][j - 2]);
+            }
+            if (( i-1 >= 0 ) && (j - 2 >= 0 ) ){
+                grafo->insertEdge(matriz[i][j], matriz[i - 1][j - 2]);
+            }
+            //cima
+            if (( i-2 >= 0 ) && (j - 1 >= 0 ) ){
+                grafo->insertEdge(matriz[i][j], matriz[i - 2][j - 1]);
+            }
+            if (( i-2 >= 0 ) && (j + 1 < 8 ) ){
+                grafo->insertEdge(matriz[i][j], matriz[i - 2][j + 1]);
+            }
 
         }
 
@@ -465,9 +501,12 @@ int main() {
     Tabuleiro *tabuleiro = new Tabuleiro();
     Lista<string> *posCavalos = new Lista<string>();
     tabuleiro->setPosCavalos(posCavalos);
+    Grafo<int> *grafo = tabuleiro->getGrafo();
 
 
-     //tabuleiro->setRei(posicao_rei);
+
+
+    //tabuleiro->setRei(posicao_rei);
     //
     //tabuleiro->getMelhorJogada();
 
