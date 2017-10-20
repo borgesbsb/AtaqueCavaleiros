@@ -19,7 +19,7 @@ public:
 
     void setItems(vector<T> items);
 
-    void addToEnd(T&);
+    void addToEnd(T);
 
     T pop();
 
@@ -82,7 +82,7 @@ void Lista<T>::setItems(vector<T> items) {
 }
 
 template <class T>
-void Lista<T>::addToEnd(T &item ) {
+void Lista<T>::addToEnd(T item ) {
     items.push_back(item);
 }
 
@@ -110,6 +110,8 @@ private:
 public:
     Vertice(){};
 
+    Vertice(T);
+
     T getItem();
     void setItem(T);
 
@@ -123,6 +125,14 @@ public:
     Vertice<T>* getPred();
 
 };
+
+template <class T>
+Vertice<T>::Vertice(T item){
+    this->item =  item;
+    this->setPred(nullptr);
+    this->setCor("vazio");
+}
+
 
 template <class T>
 Vertice<T>* Vertice<T>::getPred() {
@@ -178,7 +188,7 @@ public:
 
     void inicialize(int);
 
-    void insertEdge( Vertice<T>*,  Vertice<T>*);
+    void insertEdge( Vertice<T> *,  Vertice<T> *);
 
     void print();
 
@@ -246,9 +256,8 @@ void Grafo<T>::inicialize(int ordem) {
 }
 
 template<class T>
-void Grafo<T>::insertEdge(Vertice<T>* origem, Vertice<T>* destino) {
+void Grafo<T>::insertEdge(Vertice<T> *origem, Vertice<T> *destino) {
     listAdj[origem->getItem()].addToEnd(destino);
-    //  listAdj[destino->getItem()].addToEnd(origem);
     tamanho++;
 }
 
@@ -318,7 +327,156 @@ void Grafo<T>::bfs(Vertice<T>* origem) {
 }
 
 
+class Tabuleiro {
+private:
+    Grafo<string> *grafo;
+    Lista<string> *posCavalos;
+    int rei;
+    Vertice<string> *matriz[8][8];
+
+
+public:
+    Tabuleiro();
+
+    void setPosCavalos(Lista<string> *);
+
+    char stringToNumber(char);
+
+    char numberToString(int);
+
+    char numberToNumber(int);
+
+};
+
+char Tabuleiro::stringToNumber(char letra) {
+    switch (letra) {
+        case 'a':
+            return '0';
+        case 'b':
+            return '1';
+        case 'c':
+            return '2';
+        case 'd':
+            return '3';
+        case 'e':
+            return '4';
+        case 'f':
+            return '5';
+        case 'g':
+            return '6';
+        case 'h':
+            return '7';
+
+    }
+    return '9';
+}
+
+char Tabuleiro::numberToString(int numero) {
+    switch (numero) {
+        case 0:
+            return 'a';
+        case 1:
+            return 'b';
+        case 2:
+            return 'c';
+        case 3:
+            return 'd';
+        case 4:
+            return 'e';
+        case 5:
+            return 'f';
+        case 6:
+            return 'g';
+        case 7:
+            return 'h';
+    }
+
+    return 'z';
+
+}
+
+char Tabuleiro::numberToNumber(int numero) {
+    switch (numero) {
+        case 0:
+            return '0';
+        case 1:
+            return '1';
+        case 2:
+            return '2';
+        case 3:
+            return '3';
+        case 4:
+            return '4';
+        case 5:
+            return '5';
+        case 6:
+            return '6';
+        case 7:
+            return '7';
+    }
+
+    return '9';
+
+}
+
+
+void Tabuleiro::setPosCavalos(Lista<string> *posCavalos) {
+    this->posCavalos = posCavalos;
+
+
+
+
+}
+
+
+
+
+Tabuleiro::Tabuleiro() {
+
+    grafo = new  Grafo<string>(64);
+
+    for (int i = 0;i<8;i++) {
+        for (int j=0; j<8;j++) {
+            string casa;
+            casa.push_back(numberToString(j));
+            casa.push_back(numberToNumber(i));
+            matriz[i][j] = new Vertice<string>(casa);
+        }
+    }
+
+    for (int i=0;i<8;i++) {
+        for ( int j=0;j<8;j++) {
+
+            grafo->insertEdge(matriz[i][j],matriz[i+1][j+2]);
+
+
+        }
+
+    }
+
+
+}
+
+
+
+
 int main() {
+
+    Tabuleiro *tabuleiro = new Tabuleiro();
+    Lista<string> *posCavalos = new Lista<string>();
+    tabuleiro->setPosCavalos(posCavalos);
+
+
+     //tabuleiro->setRei(posicao_rei);
+    //
+    //tabuleiro->getMelhorJogada();
+
+
+
+
+
+/*
+
 
     Grafo<int> grafo(11);
 
