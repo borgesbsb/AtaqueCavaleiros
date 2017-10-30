@@ -21,6 +21,8 @@ public:
 
     void addToEnd(T);
 
+    void addAt(int,T);
+
     T pop();
 
     T itemAt(int);
@@ -33,6 +35,14 @@ public:
 
 
 };
+
+
+template <class T>
+void Lista<T>::addAt(int indice, T item) {
+      this->items.at(indice) = item ;
+}
+
+
 
 template<class T>
 Lista<T>::Lista() {
@@ -190,6 +200,10 @@ public:
 
     void insertEdge( Vertice<T> *,  Vertice<T> *);
 
+    void ordenarLista() ;
+
+    void insertionSort(Lista<Vertice<int>*>*);
+
     void print();
 
     void bfs(Vertice<T>*);
@@ -211,6 +225,39 @@ public:
     Lista<Vertice<T>*> *getCaminho(Vertice<T>*);
 
 };
+
+template <class T>
+void Grafo<T>::insertionSort(Lista<Vertice<int>*> *lista ) {
+
+    Vertice<int> *aux = new Vertice<int>() ;
+
+    int j = 0;
+
+      for (int i = 1; i < lista->size();i++ ){
+                 aux = lista->itemAt(i);
+                 j = i - 1;
+                 while (j >= 0 && aux->getItem() < lista->itemAt(j)->getItem()) {
+                         lista->addAt(j+1, lista->itemAt(j));
+                         j--;
+                     }
+                 lista->addAt(j+1, aux);
+             }
+
+}
+
+
+template <class T>
+void Grafo<T>::ordenarLista()  {
+
+
+        for (int i=0;i<64;i++) {
+
+            insertionSort(&this->listAdj[i]);
+        }
+
+
+}
+
 
 
 template <class T>
@@ -330,7 +377,20 @@ void Grafo<T>::bfs(Vertice<T>* origem) {
 class Tabuleiro {
 private:
     Grafo<int> *grafo;
+    Lista<Vertice<int>*> *verticesCavaleiros;
+    Lista<Lista<Vertice<int>*>*> *caminhoCavalos;
+    Vertice<int> *verticeRei;
     Lista<string> *posCavalos;
+    string correspondencia[8][8] = {
+            {"a8","b8","c8","d8","e8","f8","g8","h8"},
+            {"a7","b7","c7","d7","e7","f7","g7","h7"},
+            {"a6","b6","c6","d6","e6","f6","g6","h6"},
+            {"a5","b5","c5","d5","e5","f5","g5","h5"},
+            {"a4","b4","c4","d4","e4","f4","g4","h4"},
+            {"a3","b3","c3","d3","e3","f3","g3","h3"},
+            {"a2","b2","c2","d2","e2","f2","g2","h2"},
+            {"a1","b1","c1","d1","e1","f1","g1","h1"},
+    };
     int rei;
     Vertice<int> *matriz[8][8];
 
@@ -340,9 +400,8 @@ public:
 
     void setPosCavalos(Lista<string> *);
 
-    char stringToNumber(char);
+    int stringToNumber(char);
 
-    char numberToString(int);
 
     char numberToNumber(int);
 
@@ -350,7 +409,45 @@ public:
 
     void inserirCavalo(Vertice<int>*);
 
+    void setPosRei(string);
+
+    void ataqueDosCavaleiros();
+
+
 };
+
+void Tabuleiro::ataqueDosCavaleiros() {
+
+    for (int i = 0 ; i < this->verticesCavaleiros->size();i++ ) {
+        this->grafo->bfs(this->verticesCavaleiros->itemAt(i));
+        this->caminhoCavalos->addToEnd(this->grafo->getCaminho(this->verticeRei));
+    }
+
+    int  menor = 999;
+    for (int i = 0; i<caminhoCavalos->size();i++) {
+         if (menor > caminhoCavalos->itemAt(i)->size() ) {
+             menor = caminhoCavalos->itemAt(i)->size();
+         }
+    }
+    for (int i = 0; i<caminhoCavalos->size();i++) {
+        if (caminhoCavalos->itemAt(i)->size() == menor) {
+            int movimentos = caminhoCavalos->itemAt(i)->size() - 2 ;
+            cout << movimentos<<" ";
+            for (int j=caminhoCavalos->itemAt(i)->size()-1;j > 0;j--) {
+               int item = caminhoCavalos->itemAt(i)->itemAt(j)->getItem();
+               cout <<   correspondencia[item/8][item%8] << " " ;
+            }
+        cout << "\n";
+        }
+    }
+
+}
+
+void Tabuleiro::setPosRei(string casa) {
+    int coluna = stringToNumber(casa[0]);
+    int linha = numberToNumber(casa[1]);
+    this->verticeRei = this->matriz[linha][coluna];
+}
 
 Grafo<int> *Tabuleiro::getGrafo() {
     return this->grafo;
@@ -361,98 +458,82 @@ void Tabuleiro::inserirCavalo(Vertice<int> *vertice) {
 }
 
 
-char Tabuleiro::stringToNumber(char letra) {
+int Tabuleiro::stringToNumber(char letra) {
     switch (letra) {
         case 'a':
-            return '0';
+            return 0;
         case 'b':
-            return '1';
+            return 1;
         case 'c':
-            return '2';
+            return 2;
         case 'd':
-            return '3';
+            return 3;
         case 'e':
-            return '4';
+            return 4;
         case 'f':
-            return '5';
+            return 5;
         case 'g':
-            return '6';
+            return 6;
         case 'h':
-            return '7';
+            return 7;
 
     }
     return '9';
-}
-
-char Tabuleiro::numberToString(int numero) {
-    switch (numero) {
-        case 0:
-            return 'a';
-        case 1:
-            return 'b';
-        case 2:
-            return 'c';
-        case 3:
-            return 'd';
-        case 4:
-            return 'e';
-        case 5:
-            return 'f';
-        case 6:
-            return 'g';
-        case 7:
-            return 'h';
-    }
-
-    return 'z';
-
 }
 
 char Tabuleiro::numberToNumber(int numero) {
     switch (numero) {
-        case 0:
-            return '0';
-        case 1:
-            return '1';
-        case 2:
-            return '2';
-        case 3:
-            return '3';
-        case 4:
-            return '4';
-        case 5:
-            return '5';
-        case 6:
-            return '6';
-        case 7:
-            return '7';
+        case '1':
+            return 7;
+        case '2':
+            return 6;
+        case '3':
+            return 5;
+        case '4':
+            return 4;
+        case '5':
+            return 3;
+        case '6':
+            return 2;
+        case '7':
+            return 1;
+        case '8':
+            return 0;
     }
-
     return '9';
-
 }
 
 
 void Tabuleiro::setPosCavalos(Lista<string> *posCavalos) {
-    this->posCavalos = posCavalos;
 
+
+    for (int i = 0 ; i < posCavalos->size();i++) {
+        string casa = posCavalos->itemAt(i);
+        int coluna = stringToNumber(casa[0]);
+        int linha = numberToNumber(casa[1]);
+        this->verticesCavaleiros->addToEnd(matriz[linha][coluna]);
+    }
 
 }
 
 
-
-
 Tabuleiro::Tabuleiro() {
 
-    grafo = new  Grafo<int>(64);
+    this->grafo = new  Grafo<int>(64);
+    this->verticesCavaleiros = new Lista<Vertice<int>*>();
+    this->verticeRei = new Vertice<int>();
+    this->caminhoCavalos =  new Lista<Lista<Vertice<int>*>*>();
+
     int numeroCasa = 0;
 
     for (int i = 0;i<8;i++) {
         for (int j=0; j<8;j++) {
              matriz[i][j] = new Vertice<int>(numeroCasa);
-            numeroCasa++;
+             numeroCasa++;
         }
     }
+
+
 
     for (int i=0;i<8;i++) {
         for ( int j=0;j<8;j++) {
@@ -490,181 +571,28 @@ Tabuleiro::Tabuleiro() {
 
     }
 
-
+       grafo->ordenarLista();
 }
-
-
-
 
 int main() {
 
     Tabuleiro *tabuleiro = new Tabuleiro();
     Lista<string> *posCavalos = new Lista<string>();
+    posCavalos->addToEnd("h1");
+    posCavalos->addToEnd("c7");
+    posCavalos->addToEnd("e8");
+    posCavalos->addToEnd("a1");
+
+    string posRei = "e4";
+
     tabuleiro->setPosCavalos(posCavalos);
-    Grafo<int> *grafo = tabuleiro->getGrafo();
 
-
-
-
-    //tabuleiro->setRei(posicao_rei);
-    //
-    //tabuleiro->getMelhorJogada();
+    tabuleiro->setPosRei(posRei);
+    tabuleiro->ataqueDosCavaleiros();
 
 
 
 
 
-/*
-
-
-    Grafo<int> grafo(11);
-
-    Vertice<int> *vertice1 = new Vertice<int>();
-    vertice1->setItem(1);
-
-    Vertice<int> *vertice2 = new Vertice<int>();
-    vertice2->setItem(2);
-
-    Vertice<int> *vertice3 = new Vertice<int>();
-    vertice3->setItem(3);
-
-    Vertice<int> *vertice4 = new Vertice<int>();
-    vertice4->setItem(4);
-
-    Vertice<int> *vertice5 = new Vertice<int>();
-    vertice5->setItem(5);
-
-    Vertice<int> *vertice6 = new Vertice<int>();
-    vertice6->setItem(6);
-
-    Vertice<int> *vertice7 = new Vertice<int>();
-    vertice7->setItem(7);
-
-    Vertice<int> *vertice8 = new Vertice<int>();
-    vertice8->setItem(8);
-
-    Vertice<int> *vertice9 = new Vertice<int>();
-    vertice9->setItem(9);
-
-    Vertice<int> *vertice10 = new Vertice<int>();
-    vertice10->setItem(10);
-
-    Vertice<int> *vertice11 = new Vertice<int>();
-    vertice11->setItem(11);
-
-    grafo.insertEdge(vertice1, vertice9);
-    grafo.insertEdge(vertice1, vertice10);
-    grafo.insertEdge(vertice1, vertice11);
-    grafo.insertEdge(vertice1, vertice2);
-    grafo.insertEdge(vertice2, vertice1);
-    grafo.insertEdge(vertice2, vertice10);
-    grafo.insertEdge(vertice2, vertice11);
-    grafo.insertEdge(vertice2, vertice6);
-    grafo.insertEdge(vertice2, vertice5);
-    grafo.insertEdge(vertice2, vertice4);
-    grafo.insertEdge(vertice2, vertice3);
-    grafo.insertEdge(vertice3, vertice2);
-    grafo.insertEdge(vertice3, vertice4);
-    grafo.insertEdge(vertice4, vertice3);
-    grafo.insertEdge(vertice4, vertice2);
-    grafo.insertEdge(vertice4, vertice11);
-    grafo.insertEdge(vertice4, vertice5);
-    grafo.insertEdge(vertice5, vertice4);
-    grafo.insertEdge(vertice5, vertice2);
-    grafo.insertEdge(vertice5, vertice11);
-    grafo.insertEdge(vertice5, vertice6);
-    grafo.insertEdge(vertice6, vertice5);
-    grafo.insertEdge(vertice6, vertice2);
-    grafo.insertEdge(vertice6, vertice11);
-    grafo.insertEdge(vertice6, vertice7);
-    grafo.insertEdge(vertice7, vertice6);
-    grafo.insertEdge(vertice7, vertice11);
-    grafo.insertEdge(vertice7, vertice10);
-    grafo.insertEdge(vertice7, vertice9);
-    grafo.insertEdge(vertice7, vertice8);
-    grafo.insertEdge(vertice8, vertice7);
-    grafo.insertEdge(vertice8, vertice9);
-    grafo.insertEdge(vertice9, vertice8);
-    grafo.insertEdge(vertice9, vertice7);
-    grafo.insertEdge(vertice9, vertice10);
-    grafo.insertEdge(vertice9, vertice1);
-    grafo.insertEdge(vertice10, vertice7);
-    grafo.insertEdge(vertice10, vertice11);
-    grafo.insertEdge(vertice10, vertice2);
-    grafo.insertEdge(vertice10, vertice1);
-    grafo.insertEdge(vertice10, vertice9);
-    grafo.insertEdge(vertice11, vertice6);
-    grafo.insertEdge(vertice11, vertice5);
-    grafo.insertEdge(vertice11, vertice4);
-    grafo.insertEdge(vertice11, vertice2);
-    grafo.insertEdge(vertice11, vertice1);
-    grafo.insertEdge(vertice11, vertice10);
-    grafo.insertEdge(vertice11, vertice7);
-
-    grafo.bfs(vertice8);
-
-    Lista<Vertice<int>*> *jogadas = grafo.getCaminho(vertice3);
-
-    for (int i = 0; i< jogadas->size();i++) {
-        cout << jogadas->itemAt(i)->getItem() << " ";
-
-    }
-
-
-    //grafo.imprimir();
-
-
-
-
-
-    /*
-
-    Lista<int> fila;
-
-    int *ponteiro  = new int() ;
-    int *ponteiro2 = new int() ;
-    int *ponteiro3 = new int() ;
-    *ponteiro = 1;
-    *ponteiro2 = 2;
-    *ponteiro3 = 3;
-
-
-    fila.addToEnd(*ponteiro);
-    fila.addToEnd(*ponteiro2);
-    fila.addToEnd(*ponteiro3);
-    fila.imprimir();
-    cout<<fila.size();
-    fila.pop();
-    cout << endl;
-    fila.imprimir();
-    cout<<fila.size();
-
-/* Ekementos de Teste
-    Vertice<int> *vertice0 = new Vertice<int>();
-    Vertice<int> *vertice1 = new Vertice<int>();
-    Vertice<int> *vertice2 = new Vertice<int>();
-    Vertice<int> *vertice3 = new Vertice<int>();
-
-    vertice0->setItem(0);
-    vertice0->setCor("branco");
-
-    vertice1->setItem(1);
-    vertice1->setCor("azul");
-
-    vertice2->setItem(2);
-    vertice2->setCor("amarelo");
-
-    vertice3->setItem(3);
-    vertice3->setCor("roxo");
-
-    grafo.insertEdge(vertice0, vertice1);
-    grafo.insertEdge(vertice0, vertice3);
-    grafo.insertEdge(vertice1, vertice2);
-    grafo.insertEdge(vertice3, vertice2);
-    grafo.imprimir();
-    cout << "teste cor============================================="<<"\n";
-    vertice1->setCor("Verde");
-    grafo.imprimir();
-*/
     return 0;
 }
