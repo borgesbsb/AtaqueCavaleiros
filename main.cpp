@@ -416,6 +416,7 @@ vector<int> Tabuleiro::ataqueDosCavaleiros() {
 
 	vector<int> v;
 	
+	v.clear();	
 
     for (int i = 0 ; i < this->verticesCavaleiros->size();i++ ) {
         this->grafo->bfs(this->verticesCavaleiros->itemAt(i));
@@ -432,24 +433,11 @@ vector<int> Tabuleiro::ataqueDosCavaleiros() {
     
     for (int j = 0; j < caminhoCavalos->size(); j++) {
     	if (menor == caminhoCavalos->itemAt(j)->size()) {
-    		v.push_back(menor);
+    		v.push_back(menor-2);
     	}
-    }    
+    }   
     
     return v;   
-    /*
-    for (int i = 0; i<caminhoCavalos->size();i++) {
-        if (caminhoCavalos->itemAt(i)->size() == menor) {
-            int movimentos = caminhoCavalos->itemAt(i)->size() - 2 ;
-            cout << movimentos<<" ";
-            for (int j=caminhoCavalos->itemAt(i)->size()-1;j > 0;j--) {
-               int item = caminhoCavalos->itemAt(i)->itemAt(j)->getItem();
-               cout <<   correspondencia[item/8][item%8] << " " ;
-            }
-        cout << "\n";
-        }
-    }*/
-	
 }
 
 void Tabuleiro::setPosRei(string casa) {
@@ -591,13 +579,14 @@ int main() {
 	string c;
 	string r;
 	vector<int> p;
-
-    Tabuleiro *tabuleiro = new Tabuleiro();
-    Lista<string> *posCavalos = new Lista<string>();
     
     cin >> n;
     
     for (int i = 0; i < n; i++) {
+    	
+    	Tabuleiro *tabuleiro = new Tabuleiro();
+    	Lista<string> *posCavalos = new Lista<string>();
+    
     	for (int j = 0; j < 4; j++ ) {
     		cin >> c;
     		posCavalos->addToEnd(c);
@@ -609,26 +598,14 @@ int main() {
     	tabuleiro->setPosRei(r);   	
     	p = tabuleiro->ataqueDosCavaleiros();
   
-    	for (int k = 0; k < p.size(); k++) {
+    	for (unsigned int k = 0; k < p.size(); k++) {
     		cout << p[k] << " ";
     	}
+    	
+    	p.clear();
   
     	cout << endl;
     }
-    
-    /*    
-    posCavalos->addToEnd("h1");
-    posCavalos->addToEnd("c7");
-    posCavalos->addToEnd("e8");
-    posCavalos->addToEnd("a1");
-
-    string posRei = "e4";
-
-    tabuleiro->setPosCavalos(posCavalos);
-
-    tabuleiro->setPosRei(posRei);
-    tabuleiro->ataqueDosCavaleiros();
-    */
 
     return 0;
 }
