@@ -425,13 +425,10 @@ vector<int> Tabuleiro::ataqueDosCavaleiros() {
     int  menor = 999;
     
     for (int i = 0; i < caminhoCavalos->size(); i++) {
-    	cout << caminhoCavalos->itemAt(i)->size() << "\n";
          if (menor > caminhoCavalos->itemAt(i)->size()) {
              menor = caminhoCavalos->itemAt(i)->size();
          }
     }
-    
-    cout << menor << "\n";
     
     for (int j = 0; j < caminhoCavalos->size(); j++) {
     	if (menor == caminhoCavalos->itemAt(j)->size()) {
@@ -605,6 +602,9 @@ int main() {
     		cin >> c;
     		posCavalos->addToEnd(c);
     	}
+    	
+    	tabuleiro->setPosCavalos(posCavalos);
+    	
     	cin >> r;
     	tabuleiro->setPosRei(r);   	
     	p = tabuleiro->ataqueDosCavaleiros();
