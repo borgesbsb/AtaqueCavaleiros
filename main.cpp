@@ -573,7 +573,7 @@ Tabuleiro::Tabuleiro() {
        grafo->ordenarLista();
 }
 
-int main() {
+void processamento () {
 
 	int n;
 	string c;
@@ -606,6 +606,12 @@ int main() {
   
     	cout << endl;
     }
+
+}
+
+int main() {
+
+	processamento();
 
     return 0;
 }
