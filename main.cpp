@@ -277,7 +277,7 @@ public:
     string getCor();
     void setCor(string);
 
-    int getDist() const;
+    int getDist() ;
     void setDist(int dist);
 
     void setPred(Vertice<int>*);
@@ -326,8 +326,8 @@ void Vertice<T>::setItem(T item) {
 
 
 template<class T>
-int Vertice<T>::getDist() const {
-    return dist;
+int Vertice<T>::getDist()  {
+    return this->dist;
 }
 
 template<class T>
@@ -338,7 +338,6 @@ void Vertice<T>::setDist(int dist) {
 template<class T>
 class Grafo {
 private:
-    //Lista<Vertice<int>*> *listAdj;
     LSE<Vertice<int>*> *listAdj;
 
     int ordem;
@@ -358,20 +357,6 @@ public:
     void print();
 
     void bfs(Vertice<T>*);
-
-    Lista<T> &getListAdj();
-
-    void setListAdj(Lista<T> &listAdj);
-
-    int getOrdem();
-
-    void setOrdem(int ordem);
-
-    int getTamanho();
-
-    void setTamanho(int tamanho);
-
-    void imprimir();
 
     Lista<Vertice<T>*> *getCaminho(Vertice<T>*);
 
@@ -413,37 +398,6 @@ Grafo<T>::Grafo(int ordem) {
     inicialize(ordem);
 }
 
-template <class T>
-Lista<T> &Grafo<T>::getListAdj() {
-    return &listAdj;
-}
-
-
-template <class T>
-void Grafo<T>::setListAdj(Lista<T> &listAdj) {
-    this->listAdj = listAdj;
-}
-
-template <class T>
-int Grafo<T>::getOrdem() {
-    return ordem;
-}
-
-template <class T>
-void Grafo<T>::setOrdem(int ordem) {
-    this->ordem = ordem;
-}
-
-template <class T>
-int Grafo<T>::getTamanho()  {
-    return tamanho;
-}
-
-template <class T>
-void Grafo<T>::setTamanho(int tamanho) {
-    this->tamanho = tamanho;
-}
-
 template<class T>
 void Grafo<T>::inicialize(int ordem) {
     this->ordem = ordem;
@@ -457,41 +411,6 @@ void Grafo<T>::insertEdge(Vertice<T> *origem, Vertice<T> *destino) {
     listAdj[origem->getItem()].insere(destino);
     tamanho++;
 }
-
-/*
-template<class T>
-void Grafo<T>::imprimir() {
-       for (int i = 0;i<ordem;i++ ) {
-           cout << "No: " << i << "\n";
-           for (int j=0;j<listAdj[i].size();j++) {
-
-               cout << listAdj[i].itemAt(j)->getItem() << "-" << listAdj[i].itemAt(j)->getCor() << " ";
-           }
-           cout << "\n\n";
-       }
-}
-*/
-
-
-template<class T>
-Lista<Vertice<T>*>  *Grafo<T>::getCaminho(Vertice<T> *alvo){
-    Lista<Vertice<T>*>* caminho = new Lista<Vertice<T>*>();
-    Vertice<T> *caminhante = new Vertice<T>();
-    *caminhante = *alvo;
-
-    while (caminhante->getPred() != nullptr) {
-            Vertice<T> *jogada = new Vertice<T>();
-            *jogada = *caminhante;
-
-            caminho->addToEnd(jogada);
-
-            caminhante = caminhante->getPred();
-    }
-            caminho->addToEnd(caminhante);
-
-    return caminho;
-}
-
 
 template <class T>
 void Grafo<T>::bfs(Vertice<T>* origem) {
@@ -538,69 +457,49 @@ void Grafo<T>::bfs(Vertice<T>* origem) {
 class Tabuleiro {
 private:
     Grafo<int> *grafo;
-    Lista<Vertice<int>*> *verticesCavaleiros;
-    Lista<Lista<Vertice<int>*>*> *caminhoCavalos;
+    vector<Vertice<int>*> verticesCavaleiros;
+    vector<int> caminhoCavalos;
     Vertice<int> *verticeRei;
-    Lista<string> *posCavalos;
-    string correspondencia[8][8] = {
-            {"a8","b8","c8","d8","e8","f8","g8","h8"},
-            {"a7","b7","c7","d7","e7","f7","g7","h7"},
-            {"a6","b6","c6","d6","e6","f6","g6","h6"},
-            {"a5","b5","c5","d5","e5","f5","g5","h5"},
-            {"a4","b4","c4","d4","e4","f4","g4","h4"},
-            {"a3","b3","c3","d3","e3","f3","g3","h3"},
-            {"a2","b2","c2","d2","e2","f2","g2","h2"},
-            {"a1","b1","c1","d1","e1","f1","g1","h1"},
-    };
-    int rei;
     Vertice<int> *matriz[8][8];
-
 
 public:
     Tabuleiro();
 
-    void setPosCavalos(Lista<string> *);
+    void setPosCavalos(vector<string>);
 
     int stringToNumber(char);
 
-
     char numberToNumber(int);
-
-    Grafo<int> *getGrafo();
-
-    void inserirCavalo(Vertice<int>*);
 
     void setPosRei(string);
 
-    //void ataqueDosCavaleiros();
     vector<int> ataqueDosCavaleiros();
 
 
 };
 
-//void Tabuleiro::ataqueDosCavaleiros() {
 vector<int> Tabuleiro::ataqueDosCavaleiros() {
 
 	vector<int> v;
 	
 	v.clear();	
 
-    for (int i = 0 ; i < this->verticesCavaleiros->size();i++ ) {
-        this->grafo->bfs(this->verticesCavaleiros->itemAt(i));
-        this->caminhoCavalos->addToEnd(this->grafo->getCaminho(this->verticeRei));
+    for (int i = 0 ; i < this->verticesCavaleiros.size();i++ ) {
+        this->grafo->bfs(this->verticesCavaleiros.at(i));
+        this->caminhoCavalos.push_back(this->verticeRei->getDist());
     }
 
     int  menor = 999;
     
-    for (int i = 0; i < caminhoCavalos->size(); i++) {
-         if (menor > caminhoCavalos->itemAt(i)->size()) {
-             menor = caminhoCavalos->itemAt(i)->size();
+    for (int i = 0; i < caminhoCavalos.size(); i++) {
+         if (menor > caminhoCavalos.at(i)) {
+             menor = caminhoCavalos.at(i);
          }
     }
     
-    for (int j = 0; j < caminhoCavalos->size(); j++) {
-    	if (menor == caminhoCavalos->itemAt(j)->size()) {
-    		v.push_back(menor-2);
+    for (int j = 0; j < caminhoCavalos.size(); j++) {
+    	if (menor == caminhoCavalos.at(j)) {
+    		v.push_back(menor-1);
     	}
     }   
     
@@ -611,14 +510,6 @@ void Tabuleiro::setPosRei(string casa) {
     int coluna = stringToNumber(casa[0]);
     int linha = numberToNumber(casa[1]);
     this->verticeRei = this->matriz[linha][coluna];
-}
-
-Grafo<int> *Tabuleiro::getGrafo() {
-    return this->grafo;
-}
-
-void Tabuleiro::inserirCavalo(Vertice<int> *vertice) {
-    this->grafo->bfs(vertice);
 }
 
 
@@ -668,16 +559,15 @@ char Tabuleiro::numberToNumber(int numero) {
 }
 
 
-void Tabuleiro::setPosCavalos(Lista<string> *posCavalos) {
+void Tabuleiro::setPosCavalos(vector<string> posCavalos) {
 
 
-    for (int i = 0 ; i < posCavalos->size();i++) {
-        string casa = posCavalos->itemAt(i);
-        //int coluna = e;
-        //int linha = 1
+    for (int i = 0 ; i < posCavalos.size();i++) {
+        string casa = posCavalos.at(i);
         int coluna = stringToNumber(casa[0]);
         int linha = numberToNumber(casa[1]);
-        this->verticesCavaleiros->addToEnd(matriz[linha][coluna]);
+        this->verticesCavaleiros.push_back(matriz[linha][coluna]);
+
     }
 
 }
@@ -686,10 +576,7 @@ void Tabuleiro::setPosCavalos(Lista<string> *posCavalos) {
 Tabuleiro::Tabuleiro() {
 
     this->grafo = new  Grafo<int>(64);
-    this->verticesCavaleiros = new Lista<Vertice<int>*>();
     this->verticeRei = new Vertice<int>();
-    this->caminhoCavalos =  new Lista<Lista<Vertice<int>*>*>();
-
     int numeroCasa = 0;
 
     for (int i = 0;i<8;i++) {
@@ -752,19 +639,19 @@ void processamento () {
     for (int i = 0; i < n; i++) {
     	
     	Tabuleiro *tabuleiro = new Tabuleiro();
-    	Lista<string> *posCavalos = new Lista<string>();
+    	vector<string> posCavalos;
     
     	for (int j = 0; j < 4; j++ ) {
     		cin >> c;
-    		posCavalos->addToEnd(c);
+    		posCavalos.push_back(c);
     	}
-    	
+
     	tabuleiro->setPosCavalos(posCavalos);
-    	
+
     	cin >> r;
-    	tabuleiro->setPosRei(r);   	
+    	tabuleiro->setPosRei(r);
     	p = tabuleiro->ataqueDosCavaleiros();
-  
+
     	for (unsigned int k = 0; k < p.size(); k++) {
     		cout << p[k] << " ";
     	}
