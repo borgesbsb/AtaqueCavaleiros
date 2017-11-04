@@ -133,7 +133,7 @@ bool LSE<T>::estaOrdenada(int tam) {
     }
     else {
         while ( ordenada && i < tam - 1) {
-            if (p->item.num.num <= p->prox->item.num) {
+            if (p->item->getItem() <= p->prox->item->getItem()) {
                 p = p->prox;
             }
             else
@@ -352,36 +352,37 @@ public:
 
     void ordenarLista() ;
 
-    void insertionSort(LSE<Vertice<int>*>*);
-
-    void print();
+    void selectionSort(LSE<Vertice<T>*> *);
 
     void bfs(Vertice<T>*);
 
-    Lista<Vertice<T>*> *getCaminho(Vertice<T>*);
 
 };
-/*
-template <class T>
-void Grafo<T>::insertionSort(LSE<Vertice<int>*> *lista ) {
 
-    Vertice<int> *aux = new Vertice<int>() ;
 
-    int j = 0;
+template<class T>
+void Grafo<T>::selectionSort(LSE<Vertice<T>*> *lista  ) {
 
-      for (int i = 1; i < lista->size();i++ ){
-                 aux = lista->itemAt(i);
-                 j = i - 1;
-                 while (j >= 0 && aux->getItem() < lista->itemAt(j)->getItem()) {
-                         lista->addAt(j+1, lista->itemAt(j));
-                         j--;
-                     }
-                 lista->addAt(j+1, aux);
-             }
+    No<Vertice<T>*> *prim  = lista->getPrim();
 
+    No<Vertice<T>*>* min;
+    No<Vertice<T>*>* j;
+    No<Vertice<T>*>* i = prim->prox;
+
+    Vertice<int>* temp;
+
+    for(;i->prox!=NULL;i=i->prox) {
+        min = i;
+        for(j=i->prox;j!=NULL;j=j->prox) {
+            if(j->item->getItem() < min->item->getItem()){
+                min=j;
+            }
+        }
+        temp = i->item;
+        i->item = min->item;
+        min->item = temp;
+    }
 }
-
-*/
 
 
 
@@ -389,8 +390,25 @@ template <class T>
 void Grafo<T>::ordenarLista()  {
 
         for (int i=0;i<64;i++) {
-            insertionSort(&this->listAdj[i]);
+            selectionSort(&this->listAdj[i]);
         }
+
+
+    for (int i=0; i<64;i++) {
+        No<Vertice<T> *> *p = listAdj[i].getPrim();
+        p = p->prox;
+
+
+        cout << "Lista Adjacente  "<< i << " : ";
+        while (p != nullptr) {
+            cout << p->item->getItem() << " ";
+            p = p->prox;
+        }
+        cout << "\n";
+
+    }
+
+
 }
 
 template <class T>
@@ -440,7 +458,7 @@ void Grafo<T>::bfs(Vertice<T>* origem) {
             for(; p != nullptr ; p = p->prox){
 
                 if ( p->item->getCor() == "branco" ){
-                    Vertice<T> *destino = p->item;  //listAdj[origem->getItem()].itemAt(i);
+                    Vertice<T> *destino = p->item;
                     destino->setCor("cinza");
                     destino->setDist(origem->getDist()+1);
                     destino->setPred(origem);
@@ -624,7 +642,7 @@ Tabuleiro::Tabuleiro() {
 
     }
 
-       //grafo->ordenarLista();
+       grafo->ordenarLista();
 }
 
 void processamento () {
