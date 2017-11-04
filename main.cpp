@@ -3,6 +3,155 @@
 using namespace std;
 
 template<class T>
+class No {
+public:
+    T item;
+    No<T>* prox;
+
+    No () {
+        prox = NULL;
+    }
+
+    No (T item) {
+        this->item = item;
+        prox = NULL;
+    }
+};
+
+template<class T>
+class LSE {
+private:
+    No<T> *prim, *ult;
+public:
+    LSE ();
+    void insere(T);
+    No<T>* pred(No<T>*);
+    bool vazia();
+    No<T>* busca(T);
+    void remove(No<T>*, T&);
+    void print();
+    int tam();
+    bool estaOrdenada(int tam);
+    No<T> *getPrim();
+};
+
+template<class T>
+No<T> *LSE<T>::getPrim() {
+    return this->prim;
+}
+
+template<class T>
+LSE<T>::LSE(){
+    prim = new No<T>();
+    prim->prox = NULL;
+    ult = prim;
+}
+
+template<class T>
+void LSE<T>::insere(T item) {
+    ult->prox = new No<T>();
+    ult = ult->prox;
+    ult->prox = NULL;
+    ult->item = item;
+}
+
+template<class T>
+bool LSE<T>::vazia() {
+    return prim == ult;
+}
+
+template<class T>
+No<T>* LSE<T>::pred(No<T>* r) {
+    No<T>* p = prim->prox;
+    while (p->prox != r) {
+        p = p->prox;
+    }
+    return p;
+}
+
+template<class T>
+void LSE<T>::remove(No<T>* r, T &vertice){
+    if (vazia() || r == NULL || r == prim) {
+        cout << "impossível remover\n";
+    }
+    else {
+        vertice = r->item;
+        No<T>* p = pred(r);
+        p->prox = r->prox;
+        if (p->prox == NULL) ult = p;
+        delete r;
+    }
+}
+
+template<class T>
+No<T>* LSE<T>::busca(T vertice) {
+    No<T>* p = prim->prox;
+    while (p != NULL && p->item.num != vertice.num) {
+        p = p->prox;
+    }
+    return p;
+}
+
+template<class T>
+void LSE<T>::print() {
+    No<T> *p = prim->prox;
+    while (p != NULL) {
+        p->item.print();
+        p = p->prox;
+        cout << endl;
+    }
+}
+
+template<class T>
+int LSE<T>::tam() {
+    int tam;
+    No<T>* p = prim->prox;
+
+    if(vazia()) {
+        tam = 0;
+    }
+    else {
+        while (p != NULL ) {
+            tam++;
+            p = p->prox;
+        }
+    }
+
+    p = prim->prox;
+
+    return tam;
+}
+
+template<class T>
+bool LSE<T>::estaOrdenada(int tam) {
+    int i = 1;
+    bool ordenada = true;
+    No<T> *p = prim->prox;
+
+    if(vazia()) {
+        return true;
+    }
+    else {
+        while ( ordenada && i < tam - 1) {
+            if (p->item.num.num <= p->prox->item.num) {
+                p = p->prox;
+            }
+            else
+                ordenada  = false;
+            i++;
+        }
+    }
+
+    p = prim->prox;
+
+    return ordenada;
+}
+
+
+//////////////////////////////////////////
+
+
+template<class T>
 class Lista {
 private:
     vector<T> items;
@@ -189,7 +338,9 @@ void Vertice<T>::setDist(int dist) {
 template<class T>
 class Grafo {
 private:
-    Lista<Vertice<int>*> *listAdj;
+    //Lista<Vertice<int>*> *listAdj;
+    LSE<Vertice<int>*> *listAdj;
+
     int ordem;
     int tamanho;
     Vertice<int>* pred;
@@ -202,7 +353,7 @@ public:
 
     void ordenarLista() ;
 
-    void insertionSort(Lista<Vertice<int>*>*);
+    void insertionSort(LSE<Vertice<int>*>*);
 
     void print();
 
@@ -225,9 +376,9 @@ public:
     Lista<Vertice<T>*> *getCaminho(Vertice<T>*);
 
 };
-
+/*
 template <class T>
-void Grafo<T>::insertionSort(Lista<Vertice<int>*> *lista ) {
+void Grafo<T>::insertionSort(LSE<Vertice<int>*> *lista ) {
 
     Vertice<int> *aux = new Vertice<int>() ;
 
@@ -244,6 +395,9 @@ void Grafo<T>::insertionSort(Lista<Vertice<int>*> *lista ) {
              }
 
 }
+
+*/
+
 
 
 template <class T>
@@ -293,15 +447,18 @@ void Grafo<T>::setTamanho(int tamanho) {
 template<class T>
 void Grafo<T>::inicialize(int ordem) {
     this->ordem = ordem;
-    this->listAdj =  new Lista<Vertice<T>*>[ordem+1];
+    this->listAdj =  new LSE<Vertice<T>*>[ordem+1];
 }
 
 template<class T>
 void Grafo<T>::insertEdge(Vertice<T> *origem, Vertice<T> *destino) {
-    listAdj[origem->getItem()].addToEnd(destino);
+
+
+    listAdj[origem->getItem()].insere(destino);
     tamanho++;
 }
 
+/*
 template<class T>
 void Grafo<T>::imprimir() {
        for (int i = 0;i<ordem;i++ ) {
@@ -313,6 +470,8 @@ void Grafo<T>::imprimir() {
            cout << "\n\n";
        }
 }
+*/
+
 
 template<class T>
 Lista<Vertice<T>*>  *Grafo<T>::getCaminho(Vertice<T> *alvo){
@@ -338,10 +497,12 @@ template <class T>
 void Grafo<T>::bfs(Vertice<T>* origem) {
         //Colocando os vertices para branco
         for (int i=0;i<ordem;i++){
-            for (int j=0;j<listAdj[i].size();j++){
-                listAdj[i].itemAt(j)->setCor("branco");
-                listAdj[i].itemAt(j)->setDist(9999);
-                listAdj[i].itemAt(j)->setPred(nullptr);
+            No<Vertice<int>*> *p = listAdj[i].getPrim() ;
+            p = p->prox;
+            for(; p != nullptr ; p = p->prox){
+                p->item->setCor("branco");
+                p->item->setDist(9999);
+                p->item->setPred(nullptr);
             }
         }
         origem->setCor("cinza");
@@ -354,15 +515,21 @@ void Grafo<T>::bfs(Vertice<T>* origem) {
         while (fPrioridades.size() > 0) {
             Vertice<T>* origem = fPrioridades.pop();
 
-            for (int i =0;i<listAdj[origem ->getItem()].size();i++){
-                if ( listAdj[origem->getItem()].itemAt(i)->getCor() == "branco" ){
-                    Vertice<T>* destino = listAdj[origem->getItem()].itemAt(i);
+            No<Vertice<int>*> *p = listAdj[origem ->getItem()].getPrim() ;
+
+            p = p->prox;
+            for(; p != nullptr ; p = p->prox){
+
+                if ( p->item->getCor() == "branco" ){
+                    Vertice<T> *destino = p->item;  //listAdj[origem->getItem()].itemAt(i);
                     destino->setCor("cinza");
                     destino->setDist(origem->getDist()+1);
                     destino->setPred(origem);
                     fPrioridades.addToEnd(destino);
                 }
+
             origem->setCor("preto");
+
             }
         }
 }
@@ -570,7 +737,7 @@ Tabuleiro::Tabuleiro() {
 
     }
 
-       grafo->ordenarLista();
+       //grafo->ordenarLista();
 }
 
 void processamento () {
@@ -601,9 +768,7 @@ void processamento () {
     	for (unsigned int k = 0; k < p.size(); k++) {
     		cout << p[k] << " ";
     	}
-    	
-    	p.clear();
-  
+     	p.clear();
     	cout << endl;
     }
 
