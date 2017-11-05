@@ -27,10 +27,6 @@ public:
 	void insere(T);
 	No<T>* pred(No<T>*);
 	bool vazia();
-	No<T>* busca(T);
-	void remove(No<T>*, T&);
-	void print();
-	int tam();
 	bool estaOrdenada(int tam);
 	No<T> *getPrim();
 };
@@ -70,58 +66,6 @@ No<T>* LSE<T>::pred(No<T>* r) {
 }
 
 template<class T>
-void LSE<T>::remove(No<T>* r, T &vertice) {
-	if (vazia() || r == NULL || r == prim) {
-		cout << "impossível remover\n";
-	} else {
-		vertice = r->item;
-		No<T>* p = pred(r);
-		p->prox = r->prox;
-		if (p->prox == NULL)
-			ult = p;
-		delete r;
-	}
-}
-
-template<class T>
-No<T>* LSE<T>::busca(T vertice) {
-	No<T>* p = prim->prox;
-	while (p != NULL && p->item.num != vertice.num) {
-		p = p->prox;
-	}
-	return p;
-}
-
-template<class T>
-void LSE<T>::print() {
-	No<T> *p = prim->prox;
-	while (p != NULL) {
-		p->item.print();
-		p = p->prox;
-		cout << endl;
-	}
-}
-
-template<class T>
-int LSE<T>::tam() {
-	int tam;
-	No<T>* p = prim->prox;
-
-	if (vazia()) {
-		tam = 0;
-	} else {
-		while (p != NULL) {
-			tam++;
-			p = p->prox;
-		}
-	}
-
-	p = prim->prox;
-
-	return tam;
-}
-
-template<class T>
 bool LSE<T>::estaOrdenada(int tam) {
 	int i = 1;
 	bool ordenada = true;
@@ -143,8 +87,6 @@ bool LSE<T>::estaOrdenada(int tam) {
 
 	return ordenada;
 }
-
-//////////////////////////////////////////
 
 template<class T>
 class Lista {
@@ -175,8 +117,6 @@ public:
 
 	int size();
 
-	void imprimir();
-
 };
 
 template<class T>
@@ -196,16 +136,6 @@ T Lista<T>::pop() {
 	item = this->items.at(0);
 	this->items.erase(this->items.begin());
 	return item;
-
-}
-
-template<class T>
-void Lista<T>::imprimir() {
-
-	for (int i = 0; i < items.size(); i++) {
-		cout << items.at(i) << " ";
-	}
-	cout << "\n";
 }
 
 template<class T>
@@ -242,8 +172,6 @@ template<class T>
 int Lista<T>::size() {
 	return this->items.size();
 }
-
-//Implementaçao do Vertice
 
 template<class T>
 class Vertice {
@@ -396,7 +324,7 @@ void Grafo<T>::insertEdge(Vertice<T> *origem, Vertice<T> *destino) {
 
 template<class T>
 void Grafo<T>::bfs(Vertice<T>* origem) {
-	//Colocando os vertices para branco
+
 	for (int i = 0; i < ordem; i++) {
 		No<Vertice<int>*> *p = listAdj[i].getPrim();
 		p = p->prox;
@@ -544,9 +472,7 @@ void Tabuleiro::setPosCavalos(vector<string> posCavalos) {
 		int coluna = stringToNumber(casa[0]);
 		int linha = numberToNumber(casa[1]);
 		this->verticesCavaleiros.push_back(matriz[linha][coluna]);
-
 	}
-
 }
 
 Tabuleiro::Tabuleiro() {
@@ -565,28 +491,27 @@ Tabuleiro::Tabuleiro() {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 
-			//direita
 			if ((i + 1 < 8) && (j + 2 < 8)) {
 				grafo->insertEdge(matriz[i][j], matriz[i + 1][j + 2]);
 			}
 			if ((i - 1 >= 0) && (j + 2 < 8)) {
 				grafo->insertEdge(matriz[i][j], matriz[i - 1][j + 2]);
 			}
-			//baixo
+
 			if ((i + 2 < 8) && (j + 1 < 8)) {
 				grafo->insertEdge(matriz[i][j], matriz[i + 2][j + 1]);
 			}
 			if ((i + 2 < 8) && (j - 1 >= 0)) {
 				grafo->insertEdge(matriz[i][j], matriz[i + 2][j - 1]);
 			}
-			//esquerda
+
 			if ((i + 1 < 8) && (j - 2 >= 0)) {
 				grafo->insertEdge(matriz[i][j], matriz[i + 1][j - 2]);
 			}
 			if ((i - 1 >= 0) && (j - 2 >= 0)) {
 				grafo->insertEdge(matriz[i][j], matriz[i - 1][j - 2]);
 			}
-			//cima
+
 			if ((i - 2 >= 0) && (j - 1 >= 0)) {
 				grafo->insertEdge(matriz[i][j], matriz[i - 2][j - 1]);
 			}
